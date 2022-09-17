@@ -2,6 +2,7 @@
 #define SPONGE_LIBSPONGE_BYTE_STREAM_HH
 
 #include <string>
+#include <list>
 
 //! \brief An in-order byte stream.
 
@@ -12,7 +13,7 @@ class ByteStream {
   private:
     // Your code here -- add private members as necessary.
     size_t _capacity = 0;
-    std::vector<char> _buff = vector<char>(_capacity);
+    std::list<char> _buff{};
     size_t _buff_size = 0;
     size_t _nread = 0;
     size_t _nwrite = 0;
