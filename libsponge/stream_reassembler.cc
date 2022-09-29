@@ -65,28 +65,30 @@ void StreamReassembler::push_substring(const string &data, const size_t index, c
     _first_unassembled += elm.length;
 
     // merge substring
-    // merge next
-    long merged_bytes = 0;
-    auto iter = _blocks.lower_bound(elm);
-    while (iter != _blocks.end() && (merged_bytes = merge_block(elm, *iter)) >= 0) {
-        _first_unassembled -= merged_bytes;
-        _blocks.erase(iter);
-        iter = _blocks.lower_bound(elm);
-    }
-    // merge prev
-    if (iter == _blocks.begin()) {
-        break;
-    }
-    iter--;
-    while ((merged_bytes = merge_block(elm, *iter)) >= 0) {
-        _first_unassembled -= merged_bytes;
-        _blocks.erase(iter);
-        iter = _blocks.lower_bound(elm);
+    do {
+        // merge next
+        long merged_bytes = 0;
+        auto iter = _blocks.lower_bound(elm);
+        while (iter != _blocks.end() && (merged_bytes = merge_block(elm, *iter)) >= 0) {
+            _first_unassembled -= merged_bytes;
+            _blocks.erase(iter);
+            iter = _blocks.lower_bound(elm);
+        }
+        // merge prev
         if (iter == _blocks.begin()) {
             break;
         }
         iter--;
-    }
+        while ((merged_bytes = merge_block(elm, *iter)) >= 0) {
+            _first_unassembled -= merged_bytes;
+            _blocks.erase(iter);
+            iter = _blocks.lower_bound(elm);
+            if (iter == _blocks.begin()) {
+                break;
+            }
+            iter--;
+        }
+    } while (false);
     _blocks.insert(elm);
 
     // write to ByteStream
